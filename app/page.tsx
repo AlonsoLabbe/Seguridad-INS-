@@ -98,13 +98,11 @@ export default function Home() {
   const [mode, setMode] = useState<Mode>(null);
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
-  const [intermediate, setIntermediate] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
   const clearOutput = () => {
     setResult("");
-    setIntermediate("");
     setError("");
     setCopied(false);
   };
@@ -147,11 +145,9 @@ export default function Home() {
     }
 
     if (mode === "encrypt") {
-      const { layer1, result } = encrypt(input);
-      setIntermediate(layer1);
-      setResult(result);
+      setResult(encrypt(input).result);
     } else {
-      const { unmirrored, result } = decrypt(input);
+      const { result } = decrypt(input);
       if (result === null || result.length < 1 || result.length > MAX_PLAIN) {
         setError(
           result !== null && result.length > MAX_PLAIN
@@ -160,7 +156,6 @@ export default function Home() {
         );
         return;
       }
-      setIntermediate(unmirrored);
       setResult(result);
     }
   };
@@ -305,17 +300,7 @@ export default function Home() {
                 <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-slate-950 p-4">
                   <div>
                     <p className="text-xs uppercase tracking-wider text-slate-500">
-                      {isEnc
-                        ? "Paso 1 · Capa 1 (sustitución)"
-                        : "Paso 1 · Texto invertido (deshace Capa 2)"}
-                    </p>
-                    <p className="break-all text-slate-300">{intermediate}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-slate-500">
-                      {isEnc
-                        ? "Paso 2 · Capa 2 (espejo) — resultado final"
-                        : "Paso 2 · Texto original (deshace Capa 1)"}
+                      Resultado
                     </p>
                     <p className="break-all text-lg font-bold text-emerald-400">
                       {result}
